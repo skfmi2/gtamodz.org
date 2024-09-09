@@ -1,0 +1,101 @@
+body {
+    margin: 0;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    flex-direction: column; /* Ensure header and container stack vertically */
+    min-height: 100vh;
+    background-color: #252424; /* Light background color */
+}
+
+
+  
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #252424; /* Black background */
+    color: #fff; /* White text */
+    position: sticky; /* Ensure header stays at the top */
+    top: 0; /* Stick to the top */
+    width: 100%; /* Full width of the viewport */
+    z-index: 1000; /* Ensure header is above other content */
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    max-width: 750px; /* Increase height to make the logo bigger */
+    max-height: 75px;
+   
+}
+
+nav {
+    display: flex;
+    flex-grow: 1; /* Allow nav to take up remaining space */
+    justify-content: center; /* Center nav links horizontally */
+}
+
+.nav-link {
+    color: #fff; /* White text color for nav links */
+    text-decoration: none;
+    font-size: 16px; /* Adjust font size as needed */
+    margin: 0 15px; /* Space around nav links */
+}
+
+.nav-link:hover {
+    text-decoration: underline; /* Underline on hover for better visibility */
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px; /* Space between boxes */
+    width: 80%;
+    max-width: 1200px; /* Adjust based on your needs */
+    margin: 20px auto 0; /* Center container and add space from header */
+}
+
+a.box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #2c2a2a; /* Gray background */
+    border-radius: 10px; /* Rounded corners */
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Inherit color from parent */
+    height: 525px; /* Adjusted height to make the box taller */
+    justify-content: space-between; /* Ensure content is spaced out */
+}
+
+a.box:hover {
+    transform: translateY(-10px); /* Pop-up effect on hover */
+}
+
+.box-img {
+    width: 100%;
+    height: 70%; /* Adjust height to maintain image proportion */
+    object-fit: cover; /* Ensure image covers area */
+}
+
+.box-content {
+    padding: 15px;
+    text-align: center;
+}
+
+.box-title {
+    margin: 10px 0;
+    font-size: 20px;
+    color: #ffffff; /* Darker text color */
+}
+
+.box-description {
+    font-size: 14px;
+    color: #ffffff; /* Lighter text color */
+}
+
