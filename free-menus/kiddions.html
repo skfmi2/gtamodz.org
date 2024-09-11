@@ -23,6 +23,7 @@ body {
 }
 
 .container {
+    position: relative; /* To position Discord and YouTube icons inside the container */
     display: flex;
     align-items: center;
     border: 2px solid #ccc;
@@ -76,6 +77,29 @@ body {
     background-color: #45a049; /* Changes button color when hovered */
 }
 
+/* Social icons section */
+.social-buttons {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+}
+
+.social-button {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.social-button img {
+    width: 40px;
+    height: 40px;
+    transition: transform 0.3s ease;
+}
+
+.social-button img:hover {
+    transform: scale(1.2); /* Scale on hover */
+}
+
+/* Header */
 header {
     display: flex;
     align-items: center;
@@ -144,6 +168,16 @@ nav {
             <div class="download-section">
                 <a href="/menus/kiddionsmodmenu.zip" target="_blank" class="download-button">Download</a>
             </div>
+        </div>
+
+        <!-- Social Media Icons -->
+        <div class="social-buttons">
+            <a href="https://discord.gg/7hP25HEM88" target="_blank" class="social-button">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRccR1Pdukh57LlDUoTi0seUR5llO5Os7zMRQ&s" alt="Discord">
+            </a>
+            <a href="https://youtu.be/AX2NYFGB3lY?si=mPvV20peX1KOTZ8k" target="_blank" class="social-button">
+                <img src="https://1000logos.net/wp-content/uploads/2017/05/Red-YouTube-logo.png" alt="YouTube">
+            </a>
         </div>
     </div>
 
