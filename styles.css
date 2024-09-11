@@ -20,17 +20,7 @@ header {
     background-color: #f1f1f1;
 }
 
-#toggle-button {
-    border: none;
-    background-color: transparent;
-    font-size: 24px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
 
-#toggle-button:hover {
-    transform: scale(1.1);
-}
 
 .container {
     display: flex;
@@ -59,15 +49,5 @@ header {
 
 .box-content {
     padding: 10px;
-}
-
-.dark-mode {
-    background-color: #333333;
-    color: #ffffff;
-}
-
-.light-mode {
-    background-color: #ffffff;
-    color: #000000;
 }
 
