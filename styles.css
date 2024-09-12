@@ -1,81 +1,25 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #252424; /* Dark background color */
-    height: 100vh;
-    display: flex;
-    justify-content: center; /* Centers the container horizontally */
-    align-items: center; /* Centers the container vertically */
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    flex-direction: column; /* Ensure header and container stack vertically */
+    min-height: 100vh;
+    background-color: #252424; /* Light background color */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff;
+    color: #000000;
+    transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-.container {
-    display: flex;
-    align-items: center;
-    border: 2px solid #ccc;
-    padding: 40px;
-    background-color: white;
-    width: 90%; /* Increased width */
-    max-width: 1200px; /* Larger max width */
-    border-radius: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increased shadow for depth */
-}
 
-.image {
-    width: 300px; /* Larger image size */
-    height: auto;
-    margin-right: 40px; /* More space between image and content */
-}
-
-.content {
-    flex: 1;
-}
-
-.file-title {
-    font-size: 2rem; /* Larger title font size */
-    color: #333;
-    margin-bottom: 20px;
-}
-
-.file-description {
-    font-size: 1.5rem; /* Larger description font size */
-    color: #555;
-    margin-bottom: 30px;
-}
-
-.download-section {
-    display: inline-block;
-}
-
-.download-button {
-    display: inline-block;
-    padding: 15px 30px; /* Larger padding for a bigger button */
-    background-color: #4CAF50;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 1.2rem; /* Slightly larger font size */
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-.download-button:hover {
-    transform: scale(1.1); /* Makes the button pop out when hovered */
-    background-color: #45a049; /* Changes button color when hovered */
-}
 
 header {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 10px 20px;
-    background-color: #252424; /* Dark background for header */
+    background-color: #252424; /* Black background */
     color: #fff; /* White text */
-    position: fixed; /* Keep the header fixed at the top */
+    position: sticky; /* Ensure header stays at the top */
     top: 0; /* Stick to the top */
     width: 100%; /* Full width of the viewport */
     z-index: 1000; /* Ensure header is above other content */
@@ -84,11 +28,14 @@ header {
 .logo-container {
     display: flex;
     align-items: center;
+    padding: 20px;
+    background-color: #f1f1f1;
 }
 
 .logo {
-    max-width: 750px;
+    max-width: 750px; /* Increase height to make the logo bigger */
     max-height: 75px;
+
 }
 
 nav {
@@ -98,12 +45,86 @@ nav {
 }
 
 .nav-link {
-    color: #fff;
+    color: #fff; /* White text color for nav links */
     text-decoration: none;
-    font-size: 16px;
-    margin: 0 15px;
+    font-size: 16px; /* Adjust font size as needed */
+    margin: 0 15px; /* Space around nav links */
+#toggle-button {
+    border: none;
+    background-color: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
 .nav-link:hover {
-    text-decoration: underline; /* Underline on hover */
+    text-decoration: underline; /* Underline on hover for better visibility */
+#toggle-button:hover {
+    transform: scale(1.1);
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px; /* Space between boxes */
+    width: 80%;
+    max-width: 1200px; /* Adjust based on your needs */
+    margin: 20px auto 0; /* Center container and add space from header */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+a.box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #2c2a2a; /* Gray background */
+    border-radius: 10px; /* Rounded corners */
+.box {
+    width: 300px;
+    margin: 10px;
+    border-radius: 10px;
+    text-align: center;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Inherit color from parent */
+    height: 525px; /* Adjusted height to make the box taller */
+    justify-content: space-between; /* Ensure content is spaced out */
+}
+
+a.box:hover {
+    transform: translateY(-10px); /* Pop-up effect on hover */
+.box:hover {
+    transform: scale(1.05);
+}
+
+.box-img {
+    width: 100%;
+    height: 70%; /* Adjust height to maintain image proportion */
+    object-fit: cover; /* Ensure image covers area */
+    border-radius: 10px;
+}
+
+.box-content {
+    padding: 15px;
+    text-align: center;
+    padding: 10px;
+}
+
+.box-title {
+    margin: 10px 0;
+    font-size: 20px;
+    color: #ffffff; /* Darker text color */
+.dark-mode {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.box-description {
+    font-size: 14px;
+    color: #ffffff; /* Lighter text color */
 }
