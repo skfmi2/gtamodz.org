@@ -27,6 +27,7 @@ header {
     z-index: 1000; /* Ensure header is above other content */
 }
 
+<<<<<<< HEAD
 .logo-container {
     display: flex;
     align-items: center;
@@ -54,6 +55,9 @@ nav {
 .nav-link:hover {
     text-decoration: underline; /* Underline on hover for better visibility */
 }
+=======
+
+>>>>>>> e25b85ec8860b38dbd14ef401f542a24f4fdac1a
 
 .container {
     display: grid;
@@ -94,6 +98,7 @@ a.box:hover {
     text-align: center;
 }
 
+<<<<<<< HEAD
 .box-title {
     margin: 10px 0;
     font-size: 20px;
@@ -108,3 +113,5 @@ a.box:hover {
 
 
 
+=======
+>>>>>>> e25b85ec8860b38dbd14ef401f542a24f4fdac1a
