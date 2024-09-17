@@ -7,152 +7,285 @@
     <link rel="icon" href="https://gtamodz.org/img/icon.png">
     <meta name="description" content="GTAModz.org is your ultimate source for both free and premium GTAV menus. Explore a wide range of custom menus designed to enhance your gameplay experience. Whether you’re looking for free options or premium features, GTAModz.org provides high-quality mods and tools to customize your GTAV experience.">
 
-
     <!-- Open Graph meta tags for social media -->
     <meta property="og:title" content="GTAModz.org - Kiddons Mod Menu">
     <meta property="og:description" content="GTAModz.org offers an extensive collection of GTAV menus, including both free and premium options. Find the perfect menu to elevate your gaming experience with high-quality mods and tools.">
     <meta property="og:image" content="https://gtamodz.org/img/icon.png">
     <meta property="og:url" content="https://www.gtamodz.org">
     <style>
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #252424; /* Dark background color */
-    height: 100vh;
-    display: flex;
-    justify-content: center; /* Centers the container horizontally */
-    align-items: center; /* Centers the container vertically */
-}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #252424; /* Dark background color */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
 
-.container {
-    position: relative; /* To position Discord and YouTube icons inside the container */
+        .container {
+            display: flex;
+            align-items: center;
+            border: 2px solid #ccc;
+            padding: 40px;
+            background-color: white;
+            width: 90%; /* Increased width */
+            max-width: 1200px; /* Larger max width */
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increased shadow for depth */
+            margin-bottom: 50px; /* Some space between container and related section */
+            position: relative; /* Adjust for better positioning */
+        }
+
+        .image {
+            width: 300px; /* Larger image size */
+            height: auto;
+            margin-right: 40px; /* More space between image and content */
+        }
+
+        .content {
+            flex: 1;
+        }
+
+        .file-title {
+            font-size: 2rem; /* Larger title font size */
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .file-description {
+            font-size: 1.5rem; /* Larger description font size */
+            color: #555;
+            margin-bottom: 30px;
+        }
+
+        .download-section {
+            display: inline-block;
+        }
+
+        .download-button {
+            display: inline-block;
+            padding: 15px 30px; /* Larger padding for a bigger button */
+            background-color: #2a2e2a;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2rem; /* Slightly larger font size */
+            transition: transform 0.3s, background-color 0.3s;
+        }
+
+        .download-button:hover {
+            transform: scale(1.1); /* Makes the button pop out when hovered */
+            background-color: #343f35; /* Changes button color when hovered */
+        }
+
+        /* Related section */
+        .related-section {
+            margin: 0 auto; /* Centers related section and adds space around */
+            text-align: center;
+            width: 90%;
+            max-width: 1200px;
+            padding-bottom: 60px; /* Adds padding so footer doesn't overlap */
+        }
+
+        .related-title {
+            font-size: 1.8rem;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        /* Rainbow text effect */
+        .rainbow-text {
+            background-image: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            animation: rainbow 3s infinite;
+        }
+
+        @keyframes rainbow {
+            0% {background-position: 0%;}
+            100% {background-position: 100%;}
+        }
+
+        .related-boxes {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+            flex-wrap: wrap; /* Allows boxes to wrap on smaller screens */
+        }
+
+        .related-box {
+            display: inline-block;
+            text-align: center;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #3a3939;
+            padding: 20px;
+            width: 250px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden; /* Ensures overflow content is hidden */
+        }
+
+        .related-box:hover {
+            transform: scale(1.05); /* Pop-out effect */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .related-img {
+            width: 100%;
+            height: 150px; /* Fixed height for the image */
+            object-fit: cover; /* Ensures the image covers the area without distortion */
+            margin-bottom: 10px;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: #252424; /* Dark background for header */
+            color: #fff; /* White text */
+            position: fixed; /* Keep the header fixed at the top */
+            top: 0; /* Stick to the top */
+            width: 100%; /* Full width of the viewport */
+            z-index: 1000; /* Ensure header is above other content */
+        }
+
+        nav {
+            display: flex;
+            flex-grow: 1; /* Allow nav to take up remaining space */
+            justify-content: center; /* Center nav links horizontally */
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 0 15px;
+        }
+
+        .nav-link:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+
+        /* Footer styles */
+        footer {
+            background-color: #252424; /* Dark background */
+            color: #fff; /* White text */
+            padding: 20px 0;
+            text-align: center;
+            width: 100%;
+            position: absolute;
+            bottom: 0; /* Stick the footer to the bottom */
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .footer-container p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        .footer-nav {
+            margin-top: 10px;
+        }
+
+        .footer-link {
+            color: #d1d1d1; /* Light gray for links */
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: #fff; /* White on hover */
+        }
+
+        @media (max-width: 768px) {
+            .footer-link {
+                display: block;
+                margin: 10px 0; /* Stack links on smaller screens */
+            }
+        }
+
+        .logo-container {
     display: flex;
     align-items: center;
-    border: 2px solid #ccc;
-    padding: 40px;
-    background-color: white;
-    width: 90%; /* Increased width */
-    max-width: 1200px; /* Larger max width */
-    border-radius: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Increased shadow for depth */
-}
-
-.image {
-    width: 300px; /* Larger image size */
-    height: auto;
-    margin-right: 40px; /* More space between image and content */
-}
-
-.content {
-    flex: 1;
-}
-
-.file-title {
-    font-size: 2rem; /* Larger title font size */
-    color: #333;
-    margin-bottom: 20px;
-}
-
-.file-description {
-    font-size: 1.5rem; /* Larger description font size */
-    color: #555;
-    margin-bottom: 30px;
-}
-
-.download-section {
-    display: inline-block;
-}
-
-.download-button {
-    display: inline-block;
-    padding: 15px 30px; /* Larger padding for a bigger button */
-    background-color: #4CAF50;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 1.2rem; /* Slightly larger font size */
-    transition: transform 0.3s, background-color 0.3s;
-}
-
-.download-button:hover {
-    transform: scale(1.1); /* Makes the button pop out when hovered */
-    background-color: #45a049; /* Changes button color when hovered */
-}
-
-/* Social icons section */
-.social-buttons {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-}
-
-.social-button {
-    display: inline-block;
-    margin-left: 10px;
-}
-
-.social-button img {
-    width: 50px;
-    height: 50px;
-    transition: transform 0.3s ease;
-}
-
-.social-button img:hover {
-    transform: scale(1.2); /* Scale on hover */
-}
-
-/* Header */
-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    background-color: #252424; /* Dark background for header */
-    color: #fff; /* White text */
-    position: fixed; /* Keep the header fixed at the top */
-    top: 0; /* Stick to the top */
-    width: 100%; /* Full width of the viewport */
-    z-index: 1000; /* Ensure header is above other content */
-}
-
-.logo-container {
-    display: flex;
-    align-items: center;
+    justify-content: center; /* Ensure logo is centered */
 }
 
 .logo {
-    max-width: 750px;
+    max-width: 750px; /* Adjust as necessary */
     max-height: 75px;
 }
-
-nav {
-    display: flex;
-    flex-grow: 1; /* Allow nav to take up remaining space */
-    justify-content: center; /* Center nav links horizontally */
-}
-
-.nav-link {
-    color: #fff;
-    text-decoration: none;
-    font-size: 16px;
-    margin: 0 15px;
-}
-
-.nav-link:hover {
-    text-decoration: underline; /* Underline on hover */
-}
-
     </style>
 </head>
 <body>
 
+    <!-- Main Container -->
+    <div class="container">
+        <img src="/img/kiddions.png" alt="Kiddions Image" class="image">
+        
+        <div class="content">
+            <h3 class="file-title">(kiddionsmodmenu.zip)</h3>
+            <p class="file-description">Kiddions mod menu is now out for 1.69 and has many features to offer!</p>
+            
+            <div class="download-section">
+                <a href="https://lootdest.org/s?03e5e32c" target="_blank" class="download-button">Download</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related section starts here -->
+    <div class="related-section">
+        <h3 class="related-title">Since You Liked <span class="rainbow-text">Kiddions External Mod Menu</span></h3>
+        
+        <div class="related-boxes">
+            <a href="https://gtamodz.org/free-menus/xdev" class="related-box">
+                <img src="/img/xdev.png" alt="Xdev Outfit Editor" class="related-img">
+                <p>Xdev Outfit Editor</p>
+            </a>
+            <a href="https://gtamodz.org/free-menus/yim" class="related-box">
+                <img src="/img/yimmenu.png" alt="Yim Menu" class="related-img">
+                <p>Yim Menu</p>
+            </a>
+            <a href="https://gtamodz.org/free-menus/garth" class="related-box">
+                <img src="/img/garth.png" alt="Garth Menu" class="related-img">
+                <p>Garth Menu</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer content -->
+    <footer>
+        <div class="footer-container">
+            <p>&copy; 2024 GTAModz.org | All rights reserved.</p>
+            <nav class="footer-nav">
+                <a href="https://gtamodz.org/terms" class="footer-link">Terms of Service</a>
+                <a href="https://gtamodz.org/privacy" class="footer-link">Privacy Policy</a>
+                <a href="https://gtamodz.org/contact" class="footer-link">Contact Us</a>
+            </nav>
+        </div>
+    </footer>
+
+    <!-- Header -->
     <header>
+
         <div class="logo-container">
             <a href="https://gtamodz.org">
                 <img src="/logo.png" alt="Logo" class="logo">
@@ -165,20 +298,6 @@ nav {
             <a href="/free-menus" class="nav-link">FREE MENUS</a>
         </nav>
     </header>
-
-    <div class="container">
-        <img src="/img/kiddions.png" alt="Kiddions Image" class="image">
-        
-        <div class="content">
-            <h3 class="file-title">(kiddionsmodmenu.zip)</h3>
-            <p class="file-description">Kiddions mod menu is now out for 1.69 and has many features to offer!</p>
-            
-            <div class="download-section">
-                <a href="https://lootdest.org/s?03e5e32c" target="_blank" class="download-button">Download</a>
-            </div>
-        </div>
-
-    
 
 </body>
 </html>
