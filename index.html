@@ -28,71 +28,118 @@
     <meta property="og:url" content="https://www.gtamodz.org">
 
     <style>
-/* Footer styles */
-footer {
-    background-color: #252424; /* Dark background */
-    color: #fff; /* White text */
-    padding: 20px 0;
-    text-align: center;
-    margin-top: 30px;
-}
+        /* Footer styles */
+        footer {
+            background-color: #252424; /* Dark background */
+            color: #fff; /* White text */
+            padding: 20px 0;
+            text-align: center;
+            margin-top: 30px;
+        }
 
-.footer-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
-}
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
 
-.footer-container p {
-    margin: 0;
-    font-size: 14px;
-}
+        .footer-container p {
+            margin: 0;
+            font-size: 14px;
+        }
 
-.footer-nav {
-    margin-top: 10px;
-}
+        .footer-nav {
+            margin-top: 10px;
+        }
 
-.footer-link {
-    color: #d1d1d1; /* Light gray for links */
-    text-decoration: none;
-    margin: 0 15px;
-    font-size: 14px;
-    transition: color 0.3s ease;
-}
+        .footer-link {
+            color: #d1d1d1; /* Light gray for links */
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
 
-.footer-link:hover {
-    color: #fff; /* White on hover */
-}
+        .footer-link:hover {
+            color: #fff; /* White on hover */
+        }
 
-@media (max-width: 768px) {
-    .footer-link {
-        display: block;
-        margin: 10px 0; /* Stack links on smaller screens */
-    }
-}
+        @media (max-width: 768px) {
+            .footer-link {
+                display: block;
+                margin: 10px 0; /* Stack links on smaller screens */
+            }
+        }
 
-/* Eye icon and visitor counter styles */
-.visitor-counter {
-    display: flex;
-    align-items: center;
-    margin-top: 20px;
-}
+        /* Eye icon and visitor counter styles */
+        .visitor-counter {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
 
-.eye-icon {
-    width: 20px; /* Adjust size as needed */
-    height: auto;
-    margin-right: 8px;
-}
+        .eye-icon {
+            width: 20px; /* Adjust size as needed */
+            height: auto;
+            margin-right: 8px;
+        }
 
-.visitor-count {
-    font-size: 14px;
-    color: #d1d1d1; /* Light gray text color */
-}
+        .visitor-count {
+            font-size: 14px;
+            color: #d1d1d1; /* Light gray text color */
+        }
 
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: -200px; /* Initially hidden */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            transition: top 0.5s ease;
+            z-index: 1000;
+        }
 
+        .notification h3 {
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
 
+        .notification p {
+            margin: 0;
+            font-size: 14px;
+        }
 
+        /* Close button styles */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: transparent;
+            border: none;
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+        }
 
+        .close-btn:hover {
+            color: #ff5c5c; /* Red color on hover */
+        }
+
+        /* Animation for the notice */
+        .slide-down {
+            top: 20px;
+        }
+
+        .slide-up {
+            top: -200px; /* Slides the notification up */
+        }
     </style>
 </head>
 <body>
@@ -170,9 +217,30 @@ footer {
                 <a href="https://gtamodz.org/contact" class="footer-link">Contact Us</a>
             </nav>
         </div>
-
-       
     </footer>
-    
+
+    <!-- Notification box -->
+    <div id="notification" class="notification">
+        <button class="close-btn" id="close-notification">&times;</button>
+        <h3>Welcome to GTAModz.org!</h3>
+        <p>With GTA's new anti-cheat system, BattlEye, mod menus may be temporarily unavailable, but rest assured, we'll be the first to update with fully working menus!</p>
+    </div>
+
+    <script>
+        window.onload = function() {
+            var notification = document.getElementById('notification');
+            setTimeout(function() {
+                notification.classList.add('slide-down');
+            }, 500);
+
+            // Close button functionality
+            var closeBtn = document.getElementById('close-notification');
+            closeBtn.addEventListener('click', function() {
+                notification.classList.remove('slide-down');
+                notification.classList.add('slide-up');
+            });
+        };
+    </script>
+
 </body>
 </html>
