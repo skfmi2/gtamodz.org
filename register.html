@@ -77,11 +77,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
 
     <script type="module">
-        // Import the functions you need from the SDKs you need
+        // Import the necessary functions from Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
-        // Your web app's Firebase configuration
+        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
             authDomain: "gtamodz-89196.firebaseapp.com",
@@ -95,29 +95,37 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Handle the form submission
+        // Handle the form submission for registration
         document.getElementById('registerForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent page reload
+            event.preventDefault(); // Prevent form from reloading the page
 
-            // Get the email and password
+            // Get the username, email, and password
+            const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            // Register the user
+            // Create a new user with Firebase Authentication
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    // Account successfully created
                     const user = userCredential.user;
-                    console.log('User created:', user);
-                    // Optionally store username in database or in user profile
-                    alert('Account created successfully!');
-                    // Redirect to profile editing page
-                    window.location.href = 'edit-profile.html';
+
+                    // Update user profile with the username
+                    updateProfile(user, {
+                        displayName: username
+                    }).then(() => {
+                        console.log('User created and profile updated:', user);
+                        alert('Account created successfully!');
+                        // Redirect to the edit-profile page after registration
+                        window.location.href = 'edit-profile.html';
+                    }).catch((error) => {
+                        console.error('Error updating profile:', error);
+                        alert('Error updating profile: ' + error.message);
+                    });
                 })
                 .catch((error) => {
                     const errorCode = error.code;
                     const errorMessage = error.message;
-                    console.error('Error: ', errorCode, errorMessage);
+                    console.error('Error creating account:', errorCode, errorMessage);
                     alert('Error creating account: ' + errorMessage);
                 });
         });

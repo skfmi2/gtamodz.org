@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
     <style>
+        /* Styling */
         body {
             font-family: Arial, sans-serif;
             display: flex;
@@ -37,18 +38,26 @@
             flex: 1;
             padding: 20px;
         }
-        .profile-pic-container {
-            text-align: center;
+        .profile-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-bottom: 20px;
+            gap: 20px;
         }
         .profile-pic-container img {
             width: 150px;
             height: 150px;
             border-radius: 50%;
             border: 3px solid #fff;
+            object-fit: cover;
         }
         .profile-pic-container input[type="file"] {
             margin-top: 10px;
+        }
+        .username-display {
+            font-size: 1.5em;
+            font-weight: bold;
         }
         .profile-info {
             max-width: 600px;
@@ -86,9 +95,12 @@
         <a href="#">Logout</a>
     </div>
     <div class="main-content">
-        <div class="profile-pic-container">
-            <img src="default-pfp.png" id="profilePic" alt="Profile Picture">
-            <input type="file" id="fileInput" accept="image/*">
+        <div class="profile-container">
+            <div class="profile-pic-container">
+                <img src="/img/default-pfp.png" id="profilePic" alt="Profile Picture">
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+            <div id="usernameDisplay" class="username-display">@username</div> <!-- Username display -->
         </div>
         <form id="profileForm">
             <input type="text" id="username" placeholder="Username" required>
@@ -98,7 +110,6 @@
         </form>
     </div>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js"></script>
@@ -107,7 +118,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
-
+        
         const firebaseConfig = {
             apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
             authDomain: "gtamodz-89196.firebaseapp.com",
@@ -124,10 +135,12 @@
         // Check if user is authenticated
         onAuthStateChanged(auth, (user) => {
             if (!user) {
-                // Redirect to registration if not authenticated
                 window.location.href = 'register.html';
             } else {
-                // User is signed in
+                document.getElementById('usernameDisplay').textContent = `@${user.displayName || "username"}`;
+                document.getElementById('username').value = user.displayName || ""; 
+                document.getElementById('profilePic').src = user.photoURL || '/img/default-pfp.png';
+
                 // Handle profile picture upload
                 document.getElementById('fileInput').addEventListener('change', function(event) {
                     const file = event.target.files[0];
@@ -135,10 +148,10 @@
                         const storageRef = ref(storage, 'profile_pics/' + user.uid);
                         uploadBytes(storageRef, file).then(() => {
                             getDownloadURL(storageRef).then((url) => {
-                                document.getElementById('profilePic').src = url;
-                                // Optionally save URL to user profile
-                            });
-                        });
+                                document.getElementById('profilePic').src = url;  
+                                updateProfile(user, { photoURL: url }).catch(console.error);
+                            }).catch(console.error);
+                        }).catch(console.error);
                     }
                 });
 
