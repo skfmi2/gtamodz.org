@@ -3,19 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>gtamodz.org | Register</title>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
-
-</head>
-<body>
-    
-    <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>gtamodz.org | Login</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,7 +28,7 @@
             text-shadow: 0 0 7px #ffffff;
         }
 
-        input[type="text"], input[type="email"], input[type="password"] {
+        input[type="email"], input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
@@ -49,7 +37,6 @@
             box-sizing: border-box;
             background-color: #1d1d1f;
             color: white; /* Set text color to white */
-            
         }
 
         input[type="submit"] {
@@ -69,7 +56,7 @@
         .login-link {
             text-align: center;
             margin-top: 10px;
-            color:white;
+            color: white;
         }
 
         .login-link a {
@@ -87,63 +74,63 @@
             margin: 0 auto; /* Center the logo horizontally */
             filter: none;
         }
-
-        @keyframes starAnimation {
-            0% {
-                transform: translateX(-200px) translateY(-200px) scale(0);
-                opacity: 0;
-            }
-            100% {
-                transform: translateX(200px) translateY(200px) scale(1);
-                opacity: 1;
-            }
-        }
-
-        .star {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            animation: starAnimation 3s ease-out forwards;
-        }
-
-        @keyframes sparkleAnimation {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
-        }
-
-        .sparkle {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: yellow;
-            border-radius: 50%;
-            animation: sparkleAnimation 0.5s ease-out forwards;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <img src="assets/img/starlogo.png" class="logo">
-        
+        <img src="assets/img/starlogo.png" class="logo" alt="Logo">
         <h2>Sign in to your account</h2>
-        <form action="#" method="post">
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
             <input type="submit" value="Sign in">
         </form>
         <div class="login-link">
-           Are you new to gtamodz.org? <a href="register.html">Create account</a>
+            Are you new to gtamodz.org? <a href="register.html">Create account</a>
         </div>
     </div>
 
-    
-</body>
-</html>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
+            authDomain: "gtamodz-89196.firebaseapp.com",
+            projectId: "gtamodz-89196",
+            storageBucket: "gtamodz-89196.appspot.com",
+            messagingSenderId: "837380902310",
+            appId: "1:837380902310:web:d011a0ff7e12b5c28f9367"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent page reload
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            signInWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Successfully signed in
+                    console.log('User signed in:', userCredential.user);
+                    // Redirect to profile editing page
+                    window.location.href = 'edit-profile.html';
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error('Error: ', errorCode, errorMessage);
+                    alert('Error signing in: ' + errorMessage);
+                });
+        });
+    </script>
 </body>
 </html>

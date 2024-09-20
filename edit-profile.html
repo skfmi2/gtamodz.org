@@ -7,101 +7,159 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
             background-color: #19191a;
             color: white;
         }
-
-        .container {
-            width: 400px;
-            margin: 50px auto;
+        .sidebar {
+            width: 250px;
             background-color: #1d1d1f;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
-
-        h2 {
+        .sidebar h2 {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .sidebar a {
+            display: block;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .sidebar a:hover {
+            background-color: #272424;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+        .profile-pic-container {
             text-align: center;
+            margin-bottom: 20px;
         }
-
-        input[type="text"], input[type="file"] {
+        .profile-pic-container img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 3px solid #fff;
+        }
+        .profile-pic-container input[type="file"] {
+            margin-top: 10px;
+        }
+        .profile-info {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        input[type="text"], input[type="email"], input[type="password"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 15px;
-            border: 1px solid #222020;
-            border-radius: 50px;
-            box-sizing: border-box;
             background-color: #1d1d1f;
             color: white;
+            border: 1px solid #222020;
+            border-radius: 5px;
         }
-
         input[type="submit"] {
-            width: 100%;
-            padding: 10px;
+            background-color: #201f1f;
+            cursor: pointer;
             border: none;
             border-radius: 5px;
-            background-color: #201f1f;
-            color: #fff;
-            cursor: pointer;
+            padding: 10px;
+            color: white;
+            width: 100%;
         }
-
         input[type="submit"]:hover {
             background-color: #272424;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Edit Your Profile</h2>
-        <form id="editProfileForm">
-            <input type="text" id="username" placeholder="Enter your username" required>
-            <input type="file" id="avatar" accept="image/*">
-            <input type="submit" value="Save Profile">
+    <div class="sidebar">
+        <h2>Profile Menu</h2>
+        <a href="#">Edit Profile</a>
+        <a href="#">Change Password</a>
+        <a href="#">Privacy Settings</a>
+        <a href="#">Logout</a>
+    </div>
+    <div class="main-content">
+        <div class="profile-pic-container">
+            <img src="default-pfp.png" id="profilePic" alt="Profile Picture">
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+        <form id="profileForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="New Password (optional)">
+            <input type="submit" value="Save Changes">
         </form>
     </div>
 
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
-    
-    <script>
-        // Your Firebase configuration (Replace with your own)
-     // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
-  authDomain: "gtamodz-89196.firebaseapp.com",
-  projectId: "gtamodz-89196",
-  storageBucket: "gtamodz-89196.appspot.com",
-  messagingSenderId: "837380902310",
-  appId: "1:837380902310:web:d011a0ff7e12b5c28f9367"
-};
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js"></script>
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updateProfile, updateEmail, updatePassword } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
 
-        // Handle Profile Edit form submission
-        document.getElementById('editProfileForm').addEventListener('submit', function(event) {
-            event.preventDefault();
-            
-            const user = firebase.auth().currentUser;
-            const username = document.getElementById('username').value;
-            const avatar = document.getElementById('avatar').files[0];
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
+            authDomain: "gtamodz-89196.firebaseapp.com",
+            projectId: "gtamodz-89196",
+            storageBucket: "gtamodz-89196.appspot.com",
+            messagingSenderId: "837380902310",
+            appId: "1:837380902310:web:d011a0ff7e12b5c28f9367"
+        };
 
-            if (user) {
-                const userId = user.uid;
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
 
-                // Save username to Firestore (or Realtime Database)
-                db.collection('users').doc(userId).set({
-                    username: username
-                    // Optionally handle avatar upload in Firebase Storage
-                }).then(() => {
-                    alert('Profile updated successfully!');
-                }).catch(error => {
-                    console.error('Error updating profile: ', error);
-                });
+        // Check if user is authenticated
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                // Redirect to registration if not authenticated
+                window.location.href = 'register.html';
             } else {
-                alert('No user is logged in');
+                // User is signed in
+                // Handle profile picture upload
+                document.getElementById('fileInput').addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const storageRef = ref(storage, 'profile_pics/' + user.uid);
+                        uploadBytes(storageRef, file).then(() => {
+                            getDownloadURL(storageRef).then((url) => {
+                                document.getElementById('profilePic').src = url;
+                                // Optionally save URL to user profile
+                            });
+                        });
+                    }
+                });
+
+                // Handle form submission
+                document.getElementById('profileForm').addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const username = document.getElementById('username').value;
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+
+                    if (username) {
+                        updateProfile(user, { displayName: username }).catch(console.error);
+                    }
+                    if (email) {
+                        updateEmail(user, email).catch(console.error);
+                    }
+                    if (password) {
+                        updatePassword(user, password).catch(console.error);
+                    }
+                    alert('Profile updated successfully!');
+                });
             }
         });
     </script>
