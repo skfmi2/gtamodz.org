@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #19191a;
+            color: white;
+        }
+
+        .container {
+            width: 400px;
+            margin: 50px auto;
+            background-color: #1d1d1f;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #222020;
+            border-radius: 50px;
+            box-sizing: border-box;
+            background-color: #1d1d1f;
+            color: white;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #201f1f;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #272424;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Your Profile</h2>
+        <form id="editProfileForm">
+            <input type="text" id="username" placeholder="Enter your username" required>
+            <input type="file" id="avatar" accept="image/*">
+            <input type="submit" value="Save Profile">
+        </form>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"></script>
+    
+    <script>
+        // Your Firebase configuration (Replace with your own)
+     // Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
+  authDomain: "gtamodz-89196.firebaseapp.com",
+  projectId: "gtamodz-89196",
+  storageBucket: "gtamodz-89196.appspot.com",
+  messagingSenderId: "837380902310",
+  appId: "1:837380902310:web:d011a0ff7e12b5c28f9367"
+};
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Handle Profile Edit form submission
+        document.getElementById('editProfileForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            const user = firebase.auth().currentUser;
+            const username = document.getElementById('username').value;
+            const avatar = document.getElementById('avatar').files[0];
+
+            if (user) {
+                const userId = user.uid;
+
+                // Save username to Firestore (or Realtime Database)
+                db.collection('users').doc(userId).set({
+                    username: username
+                    // Optionally handle avatar upload in Firebase Storage
+                }).then(() => {
+                    alert('Profile updated successfully!');
+                }).catch(error => {
+                    console.error('Error updating profile: ', error);
+                });
+            } else {
+                alert('No user is logged in');
+            }
+        });
+    </script>
+</body>
+</html>
