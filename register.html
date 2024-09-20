@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <style>
+        /* Basic styling for the form */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #19191a;
+            color: white;
+        }
+        .container {
+            width: 400px;
+            margin: 50px auto;
+            background-color: #1d1d1f;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        h2 {
+            text-align: center;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #1d1d1f;
+            color: white;
+            border: 1px solid #222020;
+            border-radius: 5px;
+        }
+        input[type="submit"] {
+            background-color: #201f1f;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create a gtamodz.org account</h2>
+        <form id="registerForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="submit" value="Register">
+        </form>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
+    
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
+            authDomain: "gtamodz-89196.firebaseapp.com",
+            projectId: "gtamodz-89196",
+            storageBucket: "gtamodz-89196.appspot.com",
+            messagingSenderId: "837380902310",
+            appId: "1:837380902310:web:d011a0ff7e12b5c28f9367"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // Handle the form submission
+        document.getElementById('registerForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent page reload
+
+            // Get the email and password
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const username = document.getElementById('username').value;
+
+            // Register the user
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Account successfully created
+                    const user = userCredential.user;
+                    console.log('User created:', user);
+                    // Optionally store username in database or in user profile
+                    alert('Account created successfully!');
+                    // Redirect to profile editing page
+                    window.location.href = 'edit-profile.html';
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error('Error: ', errorCode, errorMessage);
+                    alert('Error creating account: ' + errorMessage);
+                });
+        });
+    </script>
+</body>
+</html>
