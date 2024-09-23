@@ -5,7 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Profile</title>
     <style>
-      body { font-family: Arial, sans-serif; display: flex; margin: 0; background-color: #19191a; color: white; } .sidebar { width: 250px; background-color: #1d1d1f; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); } .sidebar h2 { font-size: 1.5em; margin-bottom: 20px; } .sidebar a { display: block; color: #fff; text-decoration: none; padding: 10px; border-radius: 5px; margin-bottom: 10px; } .sidebar a:hover { background-color: #272424; } .main-content { flex: 1; padding: 20px; } .profile-container { display: flex; align-items: center; margin-bottom: 20px; gap: 20px; } .profile-pic-container { position: relative; width: 150px; height: 150px; } .profile-pic-container img { width: 100%; height: 100%; border-radius: 50%; border: 3px solid #fff; object-fit: cover; transition: filter 0.3s ease; } .profile-pic-container img:hover { cursor: pointer; filter: brightness(0.7); /* Darkens the image on hover */ } .profile-pic-container input[type="file"] { display: none; /* Hide the file input */ } .username-container { font-size: 1.5em; font-weight: bold; color: white; margin-left: 10px; } #usernameDisplay { font-size: 20px; font-weight: bold; } /* Basic Styling for Input Fields */ input[type="text"], input[type="email"], input[type="password"] { width: 100%; padding: 12px; margin-bottom: 20px; background-color: #1d1d1f; color: white; border: 1px solid #333; border-radius: 6px; font-size: 1em; box-sizing: border-box; /* Ensures padding and border are included in the total width and height */ } /* Focus State for Input Fields */ input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus { outline: none; border-color: #007bff; /* Change border color on focus */ box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Add a subtle shadow for focus effect */ } /* Submit Button Styling */ input[type="submit"] { background-color: #007bff; /* Primary button color */ color: white; cursor: pointer; border: none; border-radius: 6px; padding: 12px; font-size: 1em; transition: background-color 0.3s, transform 0.2s; } input[type="submit"]:hover { background-color: #0056b3; /* Darker shade of primary color on hover */ transform: scale(1.05); /* Slightly enlarge button on hover */ } input[type="submit"]:active { background-color: #004494; /* Even darker shade when button is pressed */ transform: scale(1); /* Reset scale on click */ }
+        body { font-family: Arial, sans-serif; display: flex; margin: 0; background-color: #19191a; color: white; }
+        .sidebar { width: 250px; background-color: #1d1d1f; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+        .sidebar h2 { font-size: 1.5em; margin-bottom: 20px; }
+        .sidebar a { display: block; color: #fff; text-decoration: none; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
+        .sidebar a:hover { background-color: #272424; }
+        .main-content { flex: 1; padding: 20px; }
+        .profile-container { display: flex; align-items: center; margin-bottom: 20px; gap: 20px; }
+        .profile-pic-container { position: relative; width: 150px; height: 150px; }
+        .profile-pic-container img { width: 100%; height: 100%; border-radius: 50%; border: 3px solid #fff; object-fit: cover; transition: filter 0.3s ease; }
+        .profile-pic-container img:hover { cursor: pointer; filter: brightness(0.7); }
+        .profile-pic-container input[type="file"] { display: none; }
+        .username-container { font-size: 1.5em; font-weight: bold; color: white; margin-left: 10px; }
+        #usernameDisplay { font-size: 20px; font-weight: bold; }
+
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%; padding: 12px; margin-bottom: 20px; background-color: #1d1d1f; color: white;
+            border: 1px solid #333; border-radius: 6px; font-size: 1em; box-sizing: border-box;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+            outline: none; border-color: #007bff; box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        input[type="submit"] {
+            background-color: #007bff; color: white; cursor: pointer; border: none; border-radius: 6px;
+            padding: 12px; font-size: 1em; transition: background-color 0.3s, transform 0.2s;
+        }
+
+        input[type="submit"]:hover { background-color: #0056b3; transform: scale(1.05); }
+        input[type="submit"]:active { background-color: #004494; transform: scale(1); }
     </style>
 </head>
 <body>
@@ -14,7 +43,7 @@
         <a href="#">Edit Profile</a>
         <a href="#">Change Password</a>
         <a href="#">Privacy Settings</a>
-        <a href="#">Logout</a>
+        <a href="#" id="logoutButton">Logout</a>
     </div>
     <div class="main-content">
         <div class="profile-container">
@@ -42,7 +71,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut, updateProfile, updateEmail } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
         import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
         import { getDatabase, ref as dbRef, update, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
@@ -61,15 +90,29 @@
         const storage = getStorage(app);
         const database = getDatabase(app);
 
+        // Handle logout functionality
+        const logoutButton = document.getElementById('logoutButton');
+        logoutButton.addEventListener('click', () => {
+            signOut(auth).then(() => {
+                console.log('User signed out.');
+                window.location.href = 'login.html'; // Redirect after logout
+            }).catch((error) => {
+                console.error('Error during logout:', error);
+                alert('Logout failed, please try again.');
+            });
+        });
+
         onAuthStateChanged(auth, (user) => {
             if (!user) {
                 window.location.href = 'register.html';
             } else {
                 const username = user.displayName || "username";
                 document.getElementById('usernameDisplay').textContent = `@${username}`;
-                document.title = `@${username} | Edit Profile`; // Update page title
-                retrieveProfilePic(user); // Retrieve and display profile pic
-                handleProfilePictureUpload(user); // Handle file input and upload
+                document.title = `@${username} | Edit Profile`;
+                retrieveProfilePic(user);
+                handleProfilePictureUpload(user);
+                handleProfileFormSubmission(user);
+                prefillUsername(user);
             }
         });
 
@@ -88,6 +131,21 @@
             });
         }
 
+        function prefillUsername(user) {
+            const userRef = dbRef(database, 'users/' + user.uid);
+            get(userRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    if (data.username) {
+                        document.getElementById('username').value = data.username;
+                        console.log("Username retrieved and filled in:", data.username);
+                    }
+                }
+            }).catch((error) => {
+                console.error("Error retrieving username from database:", error);
+            });
+        }
+
         function handleProfilePictureUpload(user) {
             const fileInput = document.getElementById('fileInput');
             const profilePic = document.getElementById('profilePic');
@@ -99,41 +157,62 @@
             fileInput.addEventListener('change', (event) => {
                 const file = event.target.files[0];
                 if (file) {
-                    // Create a local URL for the selected file and update the profile picture immediately
                     const localURL = URL.createObjectURL(file);
                     profilePic.src = localURL;
 
-                    // Upload the file to Firebase Storage
                     const profilePicRef = storageRef(storage, `profile_pics/${user.uid}`);
                     uploadBytes(profilePicRef, file).then(() => {
                         console.log('File uploaded successfully.');
-
                         getDownloadURL(profilePicRef).then((url) => {
                             console.log('Download URL obtained:', url);
-
-                            // Update Firebase Authentication profile
+                            // Update profile picture in Firebase Auth
                             updateProfile(user, { photoURL: url }).then(() => {
-                                console.log('Profile updated successfully with new photoURL.');
-
-                                // Save the profile picture URL to Realtime Database
+                                // Save profile picture URL to Realtime Database
                                 const userRef = dbRef(database, 'users/' + user.uid);
                                 update(userRef, { photoURL: url }).then(() => {
                                     console.log("Profile picture URL updated in database.");
-                                    // Update page title with the new URL (for confirmation)
-                                    document.title = `@${user.displayName} | Edit Profile`; 
+                                    // Update profile picture immediately after upload
+                                    document.getElementById('profilePic').src = url;
                                 }).catch((error) => {
                                     console.error("Error updating profile picture URL in database:", error);
                                 });
                             }).catch((error) => {
-                                console.error("Error updating profile picture:", error);
+                                console.error("Error updating profile picture URL in auth:", error);
                             });
-                        }).catch((error) => {
-                            console.error('Error getting download URL:', error);
                         });
                     }).catch((error) => {
                         console.error('Error uploading file:', error);
                     });
                 }
+            });
+        }
+
+        function handleProfileFormSubmission(user) {
+            const profileForm = document.getElementById('profileForm');
+            profileForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const newEmail = document.getElementById('email').value;
+
+                // Update email in Firebase Auth
+                updateEmail(user, newEmail).then(() => {
+                    console.log('Email updated successfully.');
+
+                    // Update email in Realtime Database
+                    const userRef = dbRef(database, 'users/' + user.uid);
+                    update(userRef, { email: newEmail }).then(() => {
+                        console.log('Email updated in Realtime Database.');
+                        alert('Email updated successfully!');
+                    }).catch((error) => {
+                        console.error('Error updating email in database:', error);
+                    });
+                }).catch((error) => {
+                    console.error('Error updating email in Firebase Auth:', error);
+                    if (error.code === 'auth/requires-recent-login') {
+                        alert('You need to log in again to change your email.');
+                        auth.signOut().then(() => window.location.href = 'login.html');
+                    }
+                });
             });
         }
     </script>

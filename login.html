@@ -73,6 +73,20 @@
             text-decoration: underline;
         }
 
+        .forgot-password {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-password a {
+            color: #999191;
+            text-decoration: none;
+        }
+
+        .forgot-password a:hover {
+            text-decoration: underline;
+        }
+
         .logo {
             width: 100px; /* Adjust the width as needed */
             display: block;
@@ -90,6 +104,9 @@
             <input type="password" id="password" placeholder="Password" required>
             <input type="submit" value="Sign in">
         </form>
+        <div class="forgot-password">
+            <a href="#" id="resetPasswordLink">Forgot Password?</a>
+        </div>
         <div class="login-link">
             Are you new to gtamodz.org? <a href="register.html">Create account</a>
         </div>
@@ -101,7 +118,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
@@ -114,6 +131,14 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+
+        // Check if the user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Redirect to edit-profile if user is logged in
+                window.location.href = 'edit-profile.html';
+            }
+        });
 
         // Handle form submission
         document.getElementById('loginForm').addEventListener('submit', function(event) {
@@ -134,6 +159,28 @@
                     const errorMessage = error.message;
                     console.error('Error: ', errorCode, errorMessage);
                     alert('Error signing in: ' + errorMessage);
+                });
+        });
+
+        // Handle forgot password link
+        document.getElementById('resetPasswordLink').addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent default link behavior
+
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('Please enter your email to reset your password.');
+                return;
+            }
+
+            sendPasswordResetEmail(auth, email)
+                .then(() => {
+                    alert('Password reset email sent. Please check your inbox.');
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    console.error('Error: ', errorCode, errorMessage);
+                    alert('Error sending password reset email: ' + errorMessage);
                 });
         });
     </script>

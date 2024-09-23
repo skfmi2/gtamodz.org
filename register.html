@@ -79,7 +79,7 @@
     <script type="module">
         // Import the necessary functions from Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
         // Your Firebase configuration
         const firebaseConfig = {
@@ -94,6 +94,14 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+
+        // Check if the user is already logged in
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                // Redirect to edit-profile if user is logged in
+                window.location.href = 'edit-profile.html';
+            }
+        });
 
         // Handle the form submission for registration
         document.getElementById('registerForm').addEventListener('submit', function (event) {
