@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <!-- Open Graph meta tags for social media -->
-    <meta property="og:title" content="GTAModz.org - Register">
-    <meta property="og:description" content="GTAModz.org offers an extensive collection of GTAV menus, including both free and premium options. Find the perfect menu to elevate your gaming experience with high-quality mods and tools.">
-    <meta property="og:image" content="https://gtamodz.org/img/icon.png">
-    <meta property="og:url" content="https://www.gtamodz.org">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -55,6 +50,11 @@
         .login-link a:hover {
             text-decoration: underline;
         }
+        .verification-message {
+            text-align: center;
+            color: #f39c12;
+            margin-top: 20px;
+        }
 
     </style>
 </head>
@@ -70,6 +70,9 @@
         <div class="login-link">
             Already have an account? <a href="login.html">Login</a>
         </div>
+        <div id="verificationMessage" class="verification-message" style="display:none;">
+            Please check your email to verify your account. You will be redirected once your email is verified.
+        </div>
     </div>
 
     <!-- Firebase SDKs -->
@@ -77,11 +80,9 @@
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js"></script>
 
     <script type="module">
-        // Import the necessary functions from Firebase SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, updateProfile, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
 
-        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
             authDomain: "gtamodz-89196.firebaseapp.com",
@@ -91,49 +92,54 @@
             appId: "1:837380902310:web:d011a0ff7e12b5c28f9367"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Check if the user is already logged in
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // Redirect to edit-profile if user is logged in
-                window.location.href = 'edit-profile.html';
-            }
-        });
-
-        // Handle the form submission for registration
         document.getElementById('registerForm').addEventListener('submit', function (event) {
-            event.preventDefault(); // Prevent form from reloading the page
+            event.preventDefault();
 
-            // Get the username, email, and password
             const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            // Create a new user with Firebase Authentication
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const user = userCredential.user;
 
-                    // Update user profile with the username
+                    // Update the user's profile with the username
                     updateProfile(user, {
                         displayName: username
                     }).then(() => {
-                        console.log('User created and profile updated:', user);
-                        alert('Account created successfully!');
-                        // Redirect to the edit-profile page after registration
-                        window.location.href = 'edit-profile.html';
+                        // Send email verification
+                        sendEmailVerification(user).then(() => {
+                            console.log('Verification email sent.');
+                            alert('Account created successfully! Please check your email to verify your account.');
+
+                            // Display the verification message
+                            document.getElementById('verificationMessage').style.display = 'block';
+
+                            // Poll to check if the user has verified their email
+                            const intervalId = setInterval(() => {
+                                user.reload().then(() => {
+                                    if (user.emailVerified) {
+                                        clearInterval(intervalId);
+                                        window.location.href = 'edit-profile.html'; // Redirect to edit-profile after verification
+                                    }
+                                });
+                            }, 1000); // Check every 3 seconds
+
+                        }).catch((error) => {
+                            console.error('Error sending email verification:', error);
+                            alert('Error sending email verification: ' + error.message);
+                        });
                     }).catch((error) => {
                         console.error('Error updating profile:', error);
                         alert('Error updating profile: ' + error.message);
                     });
                 })
                 .catch((error) => {
-                    const errorCode = error.code;
                     const errorMessage = error.message;
-                    console.error('Error creating account:', errorCode, errorMessage);
+                    console.error('Error creating account:', error);
                     alert('Error creating account: ' + errorMessage);
                 });
         });

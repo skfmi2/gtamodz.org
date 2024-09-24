@@ -162,26 +162,19 @@
 
                     const profilePicRef = storageRef(storage, `profile_pics/${user.uid}`);
                     uploadBytes(profilePicRef, file).then(() => {
-                        console.log('File uploaded successfully.');
-                        getDownloadURL(profilePicRef).then((url) => {
-                            console.log('Download URL obtained:', url);
-                            // Update profile picture in Firebase Auth
-                            updateProfile(user, { photoURL: url }).then(() => {
-                                // Save profile picture URL to Realtime Database
+                        getDownloadURL(profilePicRef).then((downloadURL) => {
+                            updateProfile(user, { photoURL: downloadURL }).then(() => {
                                 const userRef = dbRef(database, 'users/' + user.uid);
-                                update(userRef, { photoURL: url }).then(() => {
-                                    console.log("Profile picture URL updated in database.");
-                                    // Update profile picture immediately after upload
-                                    document.getElementById('profilePic').src = url;
-                                }).catch((error) => {
-                                    console.error("Error updating profile picture URL in database:", error);
-                                });
+                                update(userRef, { photoURL: downloadURL });
+                                console.log("Profile picture uploaded successfully:", downloadURL);
                             }).catch((error) => {
-                                console.error("Error updating profile picture URL in auth:", error);
+                                console.error("Error updating profile with new picture URL:", error);
                             });
+                        }).catch((error) => {
+                            console.error("Error getting profile picture download URL:", error);
                         });
                     }).catch((error) => {
-                        console.error('Error uploading file:', error);
+                        console.error("Error uploading profile picture:", error);
                     });
                 }
             });
@@ -192,26 +185,43 @@
             profileForm.addEventListener('submit', (event) => {
                 event.preventDefault();
 
+                const newUsername = document.getElementById('username').value;
                 const newEmail = document.getElementById('email').value;
+                const newPassword = document.getElementById('password').value;
 
-                // Update email in Firebase Auth
-                updateEmail(user, newEmail).then(() => {
-                    console.log('Email updated successfully.');
-
-                    // Update email in Realtime Database
-                    const userRef = dbRef(database, 'users/' + user.uid);
-                    update(userRef, { email: newEmail }).then(() => {
-                        console.log('Email updated in Realtime Database.');
-                        alert('Email updated successfully!');
+                const updates = {};
+                if (newUsername) {
+                    updateProfile(user, { displayName: newUsername }).then(() => {
+                        updates['/users/' + user.uid + '/username'] = newUsername;
+                        console.log('Username updated successfully.');
                     }).catch((error) => {
-                        console.error('Error updating email in database:', error);
+                        console.error("Error updating username:", error);
                     });
+                }
+
+                if (newEmail) {
+                    updateEmail(user, newEmail).then(() => {
+                        updates['/users/' + user.uid + '/email'] = newEmail;
+                        console.log('Email updated successfully.');
+                    }).catch((error) => {
+                        console.error("Error updating email:", error);
+                    });
+                }
+
+                if (newPassword) {
+                    user.updatePassword(newPassword).then(() => {
+                        console.log('Password updated successfully.');
+                    }).catch((error) => {
+                        console.error("Error updating password:", error);
+                    });
+                }
+
+                const userRef = dbRef(database, '/users/' + user.uid);
+                update(userRef, updates).then(() => {
+                    console.log("Database updated successfully.");
+                    alert("Profile updated successfully!");
                 }).catch((error) => {
-                    console.error('Error updating email in Firebase Auth:', error);
-                    if (error.code === 'auth/requires-recent-login') {
-                        alert('You need to log in again to change your email.');
-                        auth.signOut().then(() => window.location.href = 'login.html');
-                    }
+                    console.error("Error updating database:", error);
                 });
             });
         }
