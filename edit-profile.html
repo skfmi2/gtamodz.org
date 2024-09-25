@@ -8,8 +8,8 @@
         body { font-family: Arial, sans-serif; display: flex; margin: 0; background-color: #19191a; color: white; }
         .sidebar { width: 250px; background-color: #1d1d1f; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
         .sidebar h2 { font-size: 1.5em; margin-bottom: 20px; }
-        .sidebar a { display: block; color: #fff; text-decoration: none; padding: 10px; border-radius: 5px; margin-bottom: 10px; }
-        .sidebar a:hover { background-color: #272424; }
+        .sidebar a, .sidebar button { display: block; color: #fff; text-decoration: none; padding: 10px; border-radius: 5px; margin-bottom: 10px; background: none; border: none; text-align: left; }
+        .sidebar a:hover, .sidebar button:hover { background-color: #272424; cursor: pointer; }
         .main-content { flex: 1; padding: 20px; }
         .profile-container { display: flex; align-items: center; margin-bottom: 20px; gap: 20px; }
         .profile-pic-container { position: relative; width: 150px; height: 150px; }
@@ -44,6 +44,7 @@
         <a href="#">Change Password</a>
         <a href="#">Privacy Settings</a>
         <a href="#" id="logoutButton">Logout</a>
+        <button id="deleteAccountButton">Delete Account</button>
     </div>
     <div class="main-content">
         <div class="profile-container">
@@ -71,9 +72,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut, updateProfile, updateEmail } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut, updateProfile, updateEmail, deleteUser } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
         import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js";
-        import { getDatabase, ref as dbRef, update, get } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
+        import { getDatabase, ref as dbRef, update, get, remove } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB2i4PuBspQ5C_1T98TT3Mhb5qdU9Q29Lo",
@@ -102,6 +103,35 @@
             });
         });
 
+        // Handle delete account functionality
+        const deleteAccountButton = document.getElementById('deleteAccountButton');
+        deleteAccountButton.addEventListener('click', () => {
+            const confirmation = confirm('Are you sure you want to delete your account? This action is irreversible.');
+            if (confirmation) {
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        // Remove user data from the database
+                        const userRef = dbRef(database, 'users/' + user.uid);
+                        remove(userRef).then(() => {
+                            console.log('User data removed from database.');
+                        }).catch((error) => {
+                            console.error('Error removing user data:', error);
+                        });
+
+                        // Delete user account
+                        deleteUser(user).then(() => {
+                            console.log('User account deleted.');
+                            alert('Your account has been successfully deleted.');
+                            window.location.href = 'register.html'; // Redirect to registration page
+                        }).catch((error) => {
+                            console.error('Error deleting user:', error);
+                            alert('Failed to delete account. Please try again later.');
+                        });
+                    }
+                });
+            }
+        });
+
         onAuthStateChanged(auth, (user) => {
             if (!user) {
                 window.location.href = 'register.html';
@@ -125,59 +155,42 @@
                         document.getElementById('profilePic').src = data.photoURL;
                         console.log("Profile picture URL retrieved from database:", data.photoURL);
                     }
+                } else {
+                    console.log("No user data found in database.");
                 }
             }).catch((error) => {
-                console.error("Error retrieving profile picture URL from database:", error);
-            });
-        }
-
-        function prefillUsername(user) {
-            const userRef = dbRef(database, 'users/' + user.uid);
-            get(userRef).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    if (data.username) {
-                        document.getElementById('username').value = data.username;
-                        console.log("Username retrieved and filled in:", data.username);
-                    }
-                }
-            }).catch((error) => {
-                console.error("Error retrieving username from database:", error);
+                console.error("Error retrieving user data:", error);
             });
         }
 
         function handleProfilePictureUpload(user) {
             const fileInput = document.getElementById('fileInput');
             const profilePic = document.getElementById('profilePic');
+            profilePic.addEventListener('click', () => fileInput.click());
 
-            profilePic.addEventListener('click', () => {
-                fileInput.click();
-            });
-
-            fileInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
+            fileInput.addEventListener('change', () => {
+                const file = fileInput.files[0];
                 if (file) {
-                    const localURL = URL.createObjectURL(file);
-                    profilePic.src = localURL;
-
-                    const profilePicRef = storageRef(storage, `profile_pics/${user.uid}`);
-                    uploadBytes(profilePicRef, file).then(() => {
-                        getDownloadURL(profilePicRef).then((downloadURL) => {
-                            updateProfile(user, { photoURL: downloadURL }).then(() => {
+                    const storageReference = storageRef(storage, 'profilePictures/' + user.uid);
+                    uploadBytes(storageReference, file).then(() => {
+                        getDownloadURL(storageReference).then((url) => {
+                            updateProfile(user, { photoURL: url }).then(() => {
+                                profilePic.src = url;
                                 const userRef = dbRef(database, 'users/' + user.uid);
-                                update(userRef, { photoURL: downloadURL });
-                                console.log("Profile picture uploaded successfully:", downloadURL);
-                            }).catch((error) => {
-                                console.error("Error updating profile with new picture URL:", error);
+                                update(userRef, { photoURL: url });
+                                console.log("Profile picture updated successfully.");
                             });
-                        }).catch((error) => {
-                            console.error("Error getting profile picture download URL:", error);
                         });
-                    }).catch((error) => {
-                        console.error("Error uploading profile picture:", error);
                     });
                 }
             });
+        }
+
+        function prefillUsername(user) {
+            const usernameInput = document.getElementById('username');
+            if (user.displayName) {
+                usernameInput.value = user.displayName;
+            }
         }
 
         function handleProfileFormSubmission(user) {
@@ -189,39 +202,36 @@
                 const newEmail = document.getElementById('email').value;
                 const newPassword = document.getElementById('password').value;
 
-                const updates = {};
-                if (newUsername) {
-                    updateProfile(user, { displayName: newUsername }).then(() => {
-                        updates['/users/' + user.uid + '/username'] = newUsername;
-                        console.log('Username updated successfully.');
-                    }).catch((error) => {
-                        console.error("Error updating username:", error);
-                    });
+                const promises = [];
+
+                // Update the username if changed
+                if (newUsername !== user.displayName) {
+                    promises.push(updateProfile(user, { displayName: newUsername }).then(() => {
+                        const userRef = dbRef(database, 'users/' + user.uid);
+                        update(userRef, { username: newUsername });
+                        console.log("Username updated successfully.");
+                    }));
                 }
 
-                if (newEmail) {
-                    updateEmail(user, newEmail).then(() => {
-                        updates['/users/' + user.uid + '/email'] = newEmail;
-                        console.log('Email updated successfully.');
-                    }).catch((error) => {
-                        console.error("Error updating email:", error);
-                    });
+                // Update the email if changed
+                if (newEmail !== user.email) {
+                    promises.push(updateEmail(user, newEmail).then(() => {
+                        console.log("Email updated successfully.");
+                    }));
                 }
 
+                // Update the password if provided
                 if (newPassword) {
-                    user.updatePassword(newPassword).then(() => {
-                        console.log('Password updated successfully.');
-                    }).catch((error) => {
-                        console.error("Error updating password:", error);
-                    });
+                    promises.push(updatePassword(user, newPassword).then(() => {
+                        console.log("Password updated successfully.");
+                    }));
                 }
 
-                const userRef = dbRef(database, '/users/' + user.uid);
-                update(userRef, updates).then(() => {
-                    console.log("Database updated successfully.");
-                    alert("Profile updated successfully!");
+                Promise.all(promises).then(() => {
+                    alert('Profile updated successfully.');
                 }).catch((error) => {
-                    console.error("Error updating database:", error);
+                    console.error("Error updating profile:", error);
+                    alert('Failed to update profile. Please try again later.');
                 });
             });
         }
